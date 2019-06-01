@@ -18,6 +18,8 @@ var (
 	// app *cli.App
 )
 
+type actionFunctionArgs func(...string)
+
 // func init() {
 // 		app := cli.NewApp()
 // }
@@ -35,21 +37,14 @@ func Start() {
 }
 
 // Command helper functioons to create a command
-func (command Command) AddCommandWithArgs() {
+func (command Command) AddCommandWithArgs(fn actionFunctionArgs) {
 	newCommand := cli.Command{
 		Name: command.Name,
 		Usage: command.Description,
 		Category: command.Category,
 		UsageText: command.UsageText,
 		Action: func(c *cli.Context) error {
-			fmt.Printf("Command run for ",c)
-			if c.Args().Present() {
-				t := c.Args().First()
-				fmt.Println("Argument", t)
-				return nil
-			} else {
-				fmt.Println("No argument")
-			}
+			fn(c.Args()...)
 			return nil
 		},
 	}
