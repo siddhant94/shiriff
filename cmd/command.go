@@ -1,19 +1,32 @@
 package cmd
 
 import (
-	"fmt"
-	// "shiriff/internal/command"
+	// "fmt"
+	"shiriff/cmd/internal/command"
 )
 
-func SayHello() string {
-	fmt.Println("Yo")
-	return "Hi from Command pkg"
+// func SayHello() string {
+// 	fmt.Println("Yo")
+// 	setCommands()
+// 	return "Hi from Command pkg"
+// }
+
+func StartApp() {
+	command.Start()
 }
 
-// func registerUserCommand() {
-// 	command.Command {
-// 		Name: "Register a User",
-// 		Description: "Add client as a user"
-// 		Category: "Third Party"
-// 	}
-// }
+func SetCommands() {
+	command:= command.Command{}
+
+	command = getRegisterUserCommand()
+	command.AddCommandWithArgs()
+}
+
+func getRegisterUserCommand() command.Command {
+	command := command.Command {
+		Name: "Register a User",
+		Description: "Add client as a user",
+		Category: "Third Party",
+	}
+	return command
+}
