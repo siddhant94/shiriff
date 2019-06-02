@@ -6,11 +6,6 @@ import (
 	"shiriff/config"
 )
 
-// Hello - Returns Greeting message
-func Hello() string {
-	return "Hi, Welcome to Shiriff"
-}
-
 func main() {
 	// fmt.Println(cmd.SayHello())
 	fmt.Printf("%+v",config.GetConfig())

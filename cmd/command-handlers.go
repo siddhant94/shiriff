@@ -3,8 +3,17 @@ package cmd
 import (
 	"fmt"
 	"strings"
+	"shiriff/logs"
 	"shiriff/config"
 )
+
+var logToFile bool
+func init() {
+	appConfig := config.GetConfig()
+	if appConfig.Environment == "production" {
+		logToFile = true
+	}
+}
 
 func registerUser(args ...string) {
 	msg := "Please provide all the details - username, email and password"
@@ -160,7 +169,11 @@ func grantSuperuserRoleToUser(args ...string) {
 	fmt.Println("Enter the secret")
 	_, err := fmt.Scanf("%s", &secret)
 	if err != nil {
-		fmt.Println("Unable to read input ", err)
+		if logToFile {
+			logging.Error("Unable to read input ", err)
+		} else {
+			fmt.Println("Unable to read input ", err)
+		}
 		return
 	}
 	// Check secret
@@ -275,7 +288,11 @@ func deleteResourceFile() {
 		ans := "no"
 		_, err := fmt.Scanf("%s", &ans)
 		if err != nil {
-			fmt.Println("Unable to read input ", err)
+			if logToFile {
+				logging.Error("Unable to read input ", err)
+			} else {
+				fmt.Println("Unable to read input ", err)
+			}
 			return
 		}
 		if ans == "y" || ans == "Y" {

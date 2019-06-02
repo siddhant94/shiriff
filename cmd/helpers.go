@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"encoding/json"
 	"io/ioutil"
+	"shiriff/logs"
+	"encoding/json"
 	"shiriff/cmd/internal/command"
 )
 
@@ -31,13 +32,21 @@ func getUnmarshalledUsersList() (usersList []UserDetails) {
 	filepath := DBPATH + USERSLISTFILE
 	file, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		fmt.Println("Unable to open file, ", err)
+		if logToFile {
+			logging.Error("Unable to open file ", err)
+		} else {
+			fmt.Println("Unable to open file, ", err)
+		}
 		return
 	}
 	// Unmarshall existing JSON of users.
 	err = json.Unmarshal([]byte(file), &usersList)
 	if err != nil {
-		fmt.Println("Unable to unmarhsall list of users, ", err)
+		if logToFile {
+			logging.Error("Unable to unmarhsall list of users, ", err)
+		} else {
+			fmt.Println("Unable to unmarhsall list of users, ", err)
+		}
 		return
 	}
 	return
@@ -47,12 +56,20 @@ func updateUsersList(usersList []UserDetails) {
 	filepath := DBPATH + USERSLISTFILE
 	res, err := json.MarshalIndent(usersList, "", " ")
 	if err != nil {
-		fmt.Println("Error marshalling user data in register, ", err)
+		if logToFile {
+			logging.Error("Error marshalling user data in register, ", err)
+		} else {
+			fmt.Println("Error marshalling user data in register, ", err)
+		}
 		return
 	}
 	err = ioutil.WriteFile(filepath, res, 0644)
 	if err != nil {
-		fmt.Println("Error writing user data in register, ", err)
+		if logToFile {
+			logging.Error("Error writing user data in register, ", err)
+		} else {
+			fmt.Println("Error writing user data in register, ", err)
+		}
 		return
 	}
 }
@@ -64,29 +81,43 @@ func writeToLoggedInFileStore(email string) {
 	emptyContentsForFile(filename)
 	
 	if err != nil {
-		// panic(err)
-		fmt.Println("Cannot open file, ", err)
+		if logToFile {
+			logging.Error("Cannot open file, ", err)
+		} else {
+			fmt.Println("Cannot open file, ", err)
+		}
 	}
 	
 	defer f.Close()
 	
 	if _, err = f.WriteString(email); err != nil {
-		// panic(err)
-		fmt.Println("Cannot write to  file, ", err)
+		if logToFile {
+			logging.Error("Cannot write to  file, ", err)
+		} else {
+			fmt.Println("Cannot write to  file, ", err)
+		}
 	}
 }
 
 func emptyContentsForFile(filename string) {
 	err := os.Truncate(filename, 0)
 	if err != nil {
-		fmt.Println("Error truncating file, ",err)
+		if logToFile {
+			logging.Error("Error truncating file, ",err)
+		} else {
+			fmt.Println("Error truncating file, ",err)
+		}
 	}
 }
 
 func checkIfFileContains(filepath string, str string) bool {
 	b, err := ioutil.ReadFile(filepath)
     if err != nil {
-		fmt.Println("Cannot read file", err)
+		if logToFile {
+			logging.Error("Cannot read file", err)
+		} else {
+			fmt.Println("Cannot read file", err)
+		}
 		return false
     }
     s := string(b)
@@ -110,7 +141,12 @@ func getAccessLevelsForAUser(email string) string {
 func viewResource(filepath string) {
 	b, err := ioutil.ReadFile(filepath)
     if err != nil {
-        fmt.Println(err)
+		if logToFile {
+			logging.Error("Cannot view file ", err)
+		} else {
+			fmt.Println(err)
+		}
+		return
     }
 
     str := string(b)
@@ -136,7 +172,11 @@ func getAccessLevelsFromAccessString(accessString string) string {
 func getFileContents(filepath string) string {
 	b, err := ioutil.ReadFile(filepath)
     if err != nil {
-		fmt.Println("Cannot read file", err)
+		if logToFile {
+			logging.Error("Cannot read file ", err)
+		} else {
+			fmt.Println("Cannot read file", err)
+		}
 		return ""
 	}
 	return string(b)
@@ -150,7 +190,11 @@ func showUsersWithPromp(usersList []UserDetails) {
 		fmt.Println("Enter Y or y to grant else any key for skipping.")
 		_, err := fmt.Scanf("%s", &ans)
 		if err != nil {
-			fmt.Println("Unable to read input ", err)
+			if logToFile {
+				logging.Error("Unable to read input ", err)
+			} else {
+				fmt.Println("Unable to read input ", err)
+			}
 			return
 		}
 		if ans == "Y" || ans == "y" {
@@ -199,7 +243,11 @@ func getAccessLevelFromAbbreviation(str string) []string {
 func appendToFile(filename string, textToWrite string) {
 	f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
-		fmt.Println("Unable to open file, ",err)
+		if logToFile {
+			logging.Error("Unable to open file, ",err)
+		} else {
+			fmt.Println("Unable to open file, ",err)
+		}
 		return
 	}
 	fmt.Println("Coming here")
@@ -207,7 +255,11 @@ func appendToFile(filename string, textToWrite string) {
 	defer f.Close()
 
 	if _, err = f.WriteString(textToWrite); err != nil {
-	    fmt.Println("Unable to write to resource file, ",err)
+		if logToFile {
+			logging.Error("Unable to write to resource file, ",err)
+		} else {
+			fmt.Println("Unable to write to resource file, ",err)
+		}
 		return
 	}
 }
