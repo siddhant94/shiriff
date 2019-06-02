@@ -60,13 +60,13 @@ func loginUser(args ...string) {
 				fmt.Println("Your Access Levels - ",usersList[i].Access)
 				viewResource(RESOURCEPATH)
 				return
+			} else {
+				fmt.Println("You shall not pass! (INCORRECT PASSWORD)")
 			}
-			fmt.Println("You shall not pass! (INCORRECT PASSWORD)")
-		} else {
-			fmt.Println("Oops, you need to register first")
-			return
 		}
 	}
+	fmt.Println("Oops, you need to register first")
+	return
 
 }
 

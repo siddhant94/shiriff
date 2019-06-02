@@ -59,7 +59,7 @@ func updateUsersList(usersList []UserDetails) {
 
 func writeToLoggedInFileStore(email string) {
 	filename := DBPATH + LoggedInUsersFile
-	f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, 0600)
+	f, err := os.OpenFile(filename, os.O_WRONLY, 0640)
 	if err != nil {
 		// panic(err)
 		fmt.Println("Cannot open file, ", err)
@@ -67,7 +67,7 @@ func writeToLoggedInFileStore(email string) {
 	
 	defer f.Close()
 	
-	if _, err = f.WriteString(email+"\n"); err != nil {
+	if _, err = f.WriteString(email); err != nil {
 		// panic(err)
 		fmt.Println("Cannot write to  file, ", err)
 	}

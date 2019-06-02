@@ -6,6 +6,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// Command - Describes structure for a single command
 type Command struct {
 	Name        string
 	Description string
@@ -20,10 +21,7 @@ var (
 
 type actionFunctionArgs func(...string)
 
-// func init() {
-// 		app := cli.NewApp()
-// }
-
+// Start - starts the app
 func Start() {
 	app := cli.NewApp()
 	app.Commands = cmds
@@ -37,7 +35,7 @@ func Start() {
 	}
 }
 
-// Command helper functioons to create a command
+// AddCommandWithArgs - Command helper functioons to create a command
 func (command Command) AddCommandWithArgs(fn actionFunctionArgs) {
 	newCommand := cli.Command{
 		Name: command.Name,
