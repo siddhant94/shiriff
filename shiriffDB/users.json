@@ -1,0 +1,14 @@
+[
+ {
+  "username": "siddhant",
+  "email": "abc@gmail.com",
+  "password": "sid",
+  "Access": "READ"
+ },
+ {
+  "username": "malani",
+  "email": "pagla@gmail.com",
+  "password": "pagla",
+  "Access": "READ"
+ }
+]

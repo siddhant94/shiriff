@@ -1,3 +1,0 @@
-FIRST-NAME      LAST-NAME       EMAIL
-siddhant		sinha			abc@gmail.com
-siddhant		sinha			abc@gmail.com

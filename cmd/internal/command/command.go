@@ -29,6 +29,7 @@ func Start() {
 	app.Commands = cmds
 	app.Name = "SHIRIFF"
 	app.Usage = "Access based auth system"
+	app.Version = "1.0.0"
 	app.Author = "Siddhant"
 	err := app.Run(os.Args)
 	if err!= nil {
