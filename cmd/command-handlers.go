@@ -280,6 +280,7 @@ func deleteResourceFile() {
 		}
 		if ans == "y" || ans == "Y" {
 			emptyContentsForFile(RESOURCEPATH)
+			fmt.Println("Resource emptied")
 		} else {
 			fmt.Println("Cancelled delete command. Resource intact.")
 		}

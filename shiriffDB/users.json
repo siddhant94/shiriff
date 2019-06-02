@@ -2,23 +2,22 @@
  {
   "username": "siddhant",
   "email": "abc@gmail.com",
-  "password": "sid",
+  "Password": "sid",
   "access": "READ",
   "user_role": "superuser"
  },
  {
   "username": "malani",
   "email": "pagla@gmail.com",
-  "password": "pagla",
-  "access": "READ",
-  "accessRequestsPending": "R",
-  "user_role": ""
+  "Password": "pagla",
+  "access": "READ,WRITE,DELETE",
+  "user_role": "superuser"
  },
  {
   "username": "Legolas",
   "email": "legolas@gmail.com",
-  "password": "lego",
+  "Password": "lego",
   "access": "READ",
-  "user_role": ""
+  "user_role": "normal"
  }
 ]
