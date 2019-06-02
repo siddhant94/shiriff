@@ -5,19 +5,5 @@
   "Password": "sid",
   "access": "READ",
   "user_role": "superuser"
- },
- {
-  "username": "malani",
-  "email": "pagla@gmail.com",
-  "Password": "pagla",
-  "access": "READ,WRITE,DELETE",
-  "user_role": "superuser"
- },
- {
-  "username": "Legolas",
-  "email": "legolas@gmail.com",
-  "Password": "lego",
-  "access": "READ",
-  "user_role": "normal"
  }
 ]
