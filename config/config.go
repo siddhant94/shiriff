@@ -1,8 +1,6 @@
 package config
 
-// import(
-// 	"path/filepath"
-// )
+const APPSECRET = "dunedain"
 
 type DeploymentEnvironment string
 const DEBUG DeploymentEnvironment = "debug"

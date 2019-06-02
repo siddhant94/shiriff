@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
+	"shiriff/config"
 )
 
 func registerUser(args ...string) {
@@ -19,6 +21,7 @@ func registerUser(args ...string) {
 		Email: email,
 		Password: password,
 		Access: AccessLevelAbbrToTextMap["R"], // By default READ Access given
+		Role: NORMAL,
 	}
 
 	// Get existing users and append new user to the list.
@@ -74,12 +77,21 @@ func requestAccess(args ...string) {
 	}
 	email := args[0]
 	accessAbbr := args[1]
+	var r, w, d bool
 	// Check if access abbreviations are correct. TODO - shopuld come from config
 	for _, val := range accessAbbr {
 		oneAbbr := string(val)
 		if oneAbbr != "R" && oneAbbr != "W" && oneAbbr != "D" {
-			fmt.Println("Unknown access abbreviation (Possible values: R- READ, W-WRITE, D-DELETE). Got "+oneAbbr)
+			fmt.Println("Unknown access abbreviation (Possible values: R, W, D (READ, WRITE, DELETE). Got "+oneAbbr)
 			return
+		}
+		switch oneAbbr {
+		case "R":
+			r = true
+		case "W":
+			w = true
+		case "D":
+			d = true
 		}
 	}
 	// Check if user is logged in
@@ -93,6 +105,27 @@ func requestAccess(args ...string) {
 	usersList := getUnmarshalledUsersList()
 	for i := 0; i < len(usersList); i++ {
 		if usersList[i].Email == email {
+			// TODO : Remove nested if for more readability OR change approach.
+			accessString := usersList[i].Access
+			abb := getAccessLevelsFromAccessString(accessString)
+			// below satisfied check i.e. r is requested and is already present
+			if r == true && strings.Contains(abb, "R") {
+				accessAbbr = strings.Replace(accessAbbr, "R", "", -1)
+				fmt.Println("R(READ) access already present")
+			}
+			if w == true && strings.Contains(abb, "W") {
+				accessAbbr = strings.Replace(accessAbbr, "W", "", -1)
+				fmt.Println("W(WRITE) access already present")
+			}
+			if d == true && strings.Contains(abb, "D") {
+				accessAbbr = strings.Replace(accessAbbr, "D", "", -1)
+				fmt.Println("D(DELETE) access already present")
+			}
+			// Case of requested access levels already present
+			if len(accessAbbr) < 1 {
+				fmt.Println("Requested access levels already present")
+				return
+			}
 			usersList[i].RequestPending = accessAbbr
 		}
 	}
@@ -114,4 +147,36 @@ func checkUserAccessLevels(args ...string) {
 	}
 	accessLevels := getAccessLevelsForAUser(email)
 	fmt.Println("Access Levels for "+ email + " is " + accessLevels)
+}
+
+func grantSuperuserRoleToUser(args ...string) {
+	msg := "Please enter email whom you wish to make superuser"
+	if !validateArgumentsLength(args, 1, msg) {
+		return
+	}
+	email := args[0]
+	var secret string
+	fmt.Println("Enter the secret")
+	_, err := fmt.Scanf("%s", &secret)
+	if err != nil {
+		fmt.Println("Unable to read input ", err)
+		return
+	}
+	// Check secret
+	if secret != config.APPSECRET {
+		fmt.Println("Incorrect Secret. Request denied.")
+		return
+	}
+	// Get existing users and update role
+	usersList := getUnmarshalledUsersList()
+	for i := 0; i < len(usersList); i++ {
+		if usersList[i].Email == email {
+			usersList[i].Role = SUPERUSER
+			// Also since user has all privileges, unset `accessRequestsPending` and update `access`
+			usersList[i].RequestPending = ""
+			usersList[i].Access = AccessLevelAbbrToTextMap["R"] + "," + AccessLevelAbbrToTextMap["W"] + "," + AccessLevelAbbrToTextMap["D"]
+		}
+	}
+	updateUsersList(usersList)
+	fmt.Println("User Role Updated successfully for " + email)
 }

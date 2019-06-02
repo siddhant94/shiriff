@@ -107,3 +107,18 @@ func viewResource(filepath string) {
 
     fmt.Println(str)
 }
+
+
+func getAccessLevelsFromAccessString(accessString string) string {
+	res := ""
+	if strings.Contains(accessString, "READ") == true {
+		res = res + "R"
+	}
+	if strings.Contains(accessString, "WRITE") == true {
+		res = res + "W"
+	}
+	if strings.Contains(accessString, "DELETE") == true {
+		res = res + "D"
+	}
+	return res
+}

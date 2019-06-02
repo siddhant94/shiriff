@@ -3,21 +3,22 @@
   "username": "siddhant",
   "email": "abc@gmail.com",
   "password": "sid",
-  "Access": "READ",
-  "accessRequestsPending": ""
+  "access": "READ",
+  "user_role": ""
  },
  {
   "username": "malani",
   "email": "pagla@gmail.com",
   "password": "pagla",
-  "Access": "READ",
-  "accessRequestsPending": "W"
+  "access": "READ",
+  "accessRequestsPending": "R",
+  "user_role": ""
  },
  {
   "username": "Legolas",
   "email": "legolas@gmail.com",
   "password": "lego",
-  "Access": "READ",
-  "accessRequestsPending": ""
+  "access": "READ",
+  "user_role": ""
  }
 ]
