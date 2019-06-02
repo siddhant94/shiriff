@@ -141,8 +141,8 @@ func showUsersWithPromp(usersList []UserDetails) {
 	var ans string
 	for i := 0; i < len(usersList); i++ {
 		fmt.Println("Request Access - " + usersList[i].RequestPending + " for User: ")
-		fmt.Println(usersList[i])
-		fmt.Println("Press Y or y to grant else any key for skipping.")
+		fmt.Printf("%+v\n",usersList[i])
+		fmt.Println("Enter Y or y to grant else any key for skipping.")
 		_, err := fmt.Scanf("%s", &ans)
 		if err != nil {
 			fmt.Println("Unable to read input ", err)
@@ -150,10 +150,12 @@ func showUsersWithPromp(usersList []UserDetails) {
 		}
 		if ans == "Y" || ans == "y" {
 			grantAccessToUser(usersList[i].Email)
+			fmt.Println("Granted access.")
 		} else {
 			fmt.Println("Request skipped for user with Email: "+ usersList[i].Email)
 		}
 	}
+	fmt.Println("Finished List. Cheers!")
 }
 
 func grantAccessToUser(email string) {
@@ -171,6 +173,7 @@ func grantAccessToUser(email string) {
 			}
 		}
 	}
+	updateUsersList(usersList)
 }
 
 func getAccessLevelFromAbbreviation(str string) []string {

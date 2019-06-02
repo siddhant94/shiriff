@@ -58,6 +58,7 @@ func loginUser(args ...string) {
 				writeToLoggedInFileStore(usersList[i].Email)
 				fmt.Println("Yay! you are now logged in!")
 				fmt.Println("Your Access Levels - ",usersList[i].Access)
+				fmt.Println("Your Role - ",usersList[i].Role)
 				viewResource(RESOURCEPATH)
 			} else {
 				fmt.Println("You shall not pass! (INCORRECT PASSWORD)")
