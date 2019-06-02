@@ -6,7 +6,7 @@ type DeploymentEnvironment string
 const DEBUG DeploymentEnvironment = "debug"
 const PRODUCTION DeploymentEnvironment = "production"
 
-const LOGPATH string = "/home/sid/Desktop/Workspace/go/src/shiriff/logs.txt"
+const LOGPATH string = "/home/sid/Desktop/Workspace/go/src/shiriff/shiriff.logs"
 const Namespace string = "Shiriff"
 
 type Config struct {
