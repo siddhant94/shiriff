@@ -4,7 +4,7 @@
   "email": "abc@gmail.com",
   "password": "sid",
   "access": "READ",
-  "user_role": ""
+  "user_role": "superuser"
  },
  {
   "username": "malani",

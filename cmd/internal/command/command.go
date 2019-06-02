@@ -20,6 +20,7 @@ var (
 )
 
 type actionFunctionArgs func(...string)
+type actionFunction func()
 
 // Start - starts the app
 func Start() {
@@ -44,6 +45,21 @@ func (command Command) AddCommandWithArgs(fn actionFunctionArgs) {
 		UsageText: command.UsageText,
 		Action: func(c *cli.Context) error {
 			fn(c.Args()...)
+			return nil
+		},
+	}
+	cmds = append(cmds, newCommand)
+}
+
+// AddCommand - Command helper functioons to create a command
+func (command Command) AddCommand(fn actionFunction) {
+	newCommand := cli.Command{
+		Name: command.Name,
+		Usage: command.Description,
+		Category: command.Category,
+		UsageText: command.UsageText,
+		Action: func(c *cli.Context) error {
+			fn()
 			return nil
 		},
 	}

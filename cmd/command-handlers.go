@@ -59,10 +59,10 @@ func loginUser(args ...string) {
 				fmt.Println("Yay! you are now logged in!")
 				fmt.Println("Your Access Levels - ",usersList[i].Access)
 				viewResource(RESOURCEPATH)
-				return
 			} else {
 				fmt.Println("You shall not pass! (INCORRECT PASSWORD)")
 			}
+			return
 		}
 	}
 	fmt.Println("Oops, you need to register first")
@@ -179,4 +179,53 @@ func grantSuperuserRoleToUser(args ...string) {
 	}
 	updateUsersList(usersList)
 	fmt.Println("User Role Updated successfully for " + email)
+}
+
+func listUsersInfo() {
+	var isSuperUser bool
+	// Get logged in user
+	loggedInUsersFilePath := DBPATH + LoggedInUsersFile
+	userEmail := getFileContents(loggedInUsersFilePath)
+	usersList := getUnmarshalledUsersList()
+	for i := 0; i < len(usersList); i++ {
+		if usersList[i].Email == userEmail {
+			if usersList[i].Role == SUPERUSER {
+				isSuperUser = true
+			}
+		}
+	}
+	if isSuperUser {
+		fmt.Println("Shiriff Users List")
+		fmt.Printf("%+v\n", usersList)
+	} else {
+		fmt.Println("You are not superuser. Unable to grant request.")
+	}
+}
+
+func grantAccessToPendingUserRequests() {
+	var isSuperUser bool
+	// Get logged in user
+	loggedInUsersFilePath := DBPATH + LoggedInUsersFile
+	userEmail := getFileContents(loggedInUsersFilePath)
+
+	var pendingReqUsers []UserDetails
+
+	usersList := getUnmarshalledUsersList()
+	for i := 0; i < len(usersList); i++ {
+		if usersList[i].Email == userEmail {
+			if usersList[i].Role == SUPERUSER {
+				isSuperUser = true
+			}
+		}
+		if usersList[i].RequestPending != "" {
+			pendingReqUsers = append(pendingReqUsers, usersList[i])
+		}
+	}
+	if isSuperUser {
+		fmt.Println("Users with pending access requests")
+		showUsersWithPromp(pendingReqUsers)
+	} else {
+		fmt.Println("You are not superuser. Unable to grant request.")
+	}
+
 }

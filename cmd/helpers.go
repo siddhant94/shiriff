@@ -59,7 +59,12 @@ func updateUsersList(usersList []UserDetails) {
 
 func writeToLoggedInFileStore(email string) {
 	filename := DBPATH + LoggedInUsersFile
-	f, err := os.OpenFile(filename, os.O_WRONLY, 0640)
+	f, err := os.OpenFile(filename, os.O_WRONLY, 0600)
+	// Empty contents
+	err = os.Truncate(filename, 0)
+	if err != nil {
+		fmt.Println("Error truncating file, ",err)
+	}
 	if err != nil {
 		// panic(err)
 		fmt.Println("Cannot open file, ", err)
@@ -121,4 +126,64 @@ func getAccessLevelsFromAccessString(accessString string) string {
 		res = res + "D"
 	}
 	return res
+}
+
+func getFileContents(filepath string) string {
+	b, err := ioutil.ReadFile(filepath)
+    if err != nil {
+		fmt.Println("Cannot read file", err)
+		return ""
+	}
+	return string(b)
+}
+
+func showUsersWithPromp(usersList []UserDetails) {
+	var ans string
+	for i := 0; i < len(usersList); i++ {
+		fmt.Println("Request Access - " + usersList[i].RequestPending + " for User: ")
+		fmt.Println(usersList[i])
+		fmt.Println("Press Y or y to grant else any key for skipping.")
+		_, err := fmt.Scanf("%s", &ans)
+		if err != nil {
+			fmt.Println("Unable to read input ", err)
+			return
+		}
+		if ans == "Y" || ans == "y" {
+			grantAccessToUser(usersList[i].Email)
+		} else {
+			fmt.Println("Request skipped for user with Email: "+ usersList[i].Email)
+		}
+	}
+}
+
+func grantAccessToUser(email string) {
+	usersList := getUnmarshalledUsersList()
+	for i := 0; i < len(usersList); i++ {
+		if usersList[i].Email == email {
+			accessLevelSlice := getAccessLevelFromAbbreviation(usersList[i].RequestPending)
+			usersList[i].RequestPending = ""
+			for _, c := range accessLevelSlice {
+				usersList[i].Access += "," + c
+			}
+			// Check if all access levels
+			if strings.Contains(usersList[i].Access, "READ") && strings.Contains(usersList[i].Access, "WRITE") && strings.Contains(usersList[i].Access, "DELETE") {
+				usersList[i].Role = SUPERUSER
+			}
+		}
+	}
+}
+
+func getAccessLevelFromAbbreviation(str string) []string {
+	var accessString []string
+	for _, c := range str {
+		switch string(c) {
+			case "R":
+				accessString = append(accessString, "READ")
+			case "W": 
+				accessString = append(accessString, "WRITE")
+			case "D":
+				accessString = append(accessString, "DELETE")
+		}
+	}
+	return accessString
 }

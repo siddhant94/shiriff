@@ -24,14 +24,10 @@ const SUPERUSER UserRole = "superuser"
 type UserDetails struct {
 	UserName string `json:"username"`
 	Email	 string `json:"email"`
-	Password string `json:"password"`
+	Password string
 	Access   string	`json:"access"`
 	RequestPending string `json:"accessRequestsPending,omitempty"`
 	Role 	UserRole `json:"user_role"`
-}
-
-type UserList struct {
-	List []UserDetails `json:"users_list"`
 }
 
 func StartApp() {
@@ -56,6 +52,12 @@ func SetCommands() {
 
 	command = getGrantSuperUserRoleCommand()
 	command.AddCommandWithArgs(grantSuperuserRoleToUser)
+
+	command = getListUsersCommand()
+	command.AddCommand(listUsersInfo)
+
+	command = getAccessToUsersCommand()
+	command.AddCommand(grantAccessToPendingUserRequests)
 }
 
 func getRegisterUserCommand() command.Command {
@@ -94,6 +96,26 @@ func getGrantSuperUserRoleCommand() command.Command {
 		Description: "Would grant superuser role to the user specified. Accepts secret as input.",
 		Category: "Access Control",
 		UsageText: "makeSuperuser {secret} : Accepts app secret and grants all access to specified user.",
+	}
+	return command
+}
+
+func getListUsersCommand() command.Command {
+	command := command.Command {
+		Name: "listUsers",
+		Description: "List the users for Shiriff.",
+		Category: "Resource",
+		UsageText: "listUsers: List the users registered in Shiriff and displays their information.",
+	}
+	return command
+}
+
+func getAccessToUsersCommand() command.Command {
+	command := command.Command {
+		Name: "grantAccess",
+		Description: "Grant access to pending access-requests for users.",
+		Category: "Resource",
+		UsageText: "grantAccess: Grant access to users for pending access requests.",
 	}
 	return command
 }
