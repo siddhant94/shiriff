@@ -7,7 +7,7 @@ import (
 
 const DBPATH = "/home/sid/Desktop/Workspace/go/src/shiriff"
 const USERSLISTFILE = "/shiriffDB/users.json"
-const LoggedInUsersFile = "/shiriffDB/logged-in-users.json"
+const LoggedInUsersFile = "/shiriffDB/logged-in-users.txt"
 const RESOURCEPATH = DBPATH + "/shiriffDB/resource.txt"
 var AccessLevelAbbrToTextMap = map[string]string {
 	"R" : "READ",
