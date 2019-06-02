@@ -1,9 +1,0 @@
-[
- {
-  "username": "siddhant",
-  "email": "abc@gmail.com",
-  "Password": "sid",
-  "access": "READ,WRITE,DELETE",
-  "user_role": "superuser"
- }
-]
