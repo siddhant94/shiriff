@@ -230,3 +230,61 @@ func grantAccessToPendingUserRequests() {
 	}
 
 }
+
+func updateResourceFile(args ...string) {
+	msg := "Enter something to update resource file"
+	if !validateArgumentsLength(args, 1, msg) {
+		return
+	}
+	// Check for Write access.
+	var writeAccess = false
+	loggedInUsersFilePath := DBPATH + LoggedInUsersFile
+	userEmail := getFileContents(loggedInUsersFilePath)
+
+	usersList := getUnmarshalledUsersList()
+	for i := 0; i < len(usersList); i++ {
+		if usersList[i].Email == userEmail {
+			writeAccess = checkIfAccessPresent(usersList[i].Access, "WRITE")
+		}
+	}
+	if writeAccess {
+		appendToFile(RESOURCEPATH, args[0])
+		fmt.Println("Resource Updated")
+		viewResource(RESOURCEPATH)
+	} else {
+		fmt.Println("Sorry you dont have correct access. Register your request for `WRITE` access to admin.")
+	}
+}
+
+func deleteResourceFile() {
+	// Check for DELETE access.
+	var delAccess = false
+	loggedInUsersFilePath := DBPATH + LoggedInUsersFile
+	userEmail := getFileContents(loggedInUsersFilePath)
+
+	usersList := getUnmarshalledUsersList()
+	for i := 0; i < len(usersList); i++ {
+		if usersList[i].Email == userEmail {
+			delAccess = checkIfAccessPresent(usersList[i].Access, "DELETE")
+		}
+	}
+
+	if delAccess {
+		// Again prompt before deleting
+		fmt.Println("Are you sure you want to delete the resource? Enter y or Y to confirm or any other key to abort.")
+		ans := "no"
+		_, err := fmt.Scanf("%s", &ans)
+		if err != nil {
+			fmt.Println("Unable to read input ", err)
+			return
+		}
+		if ans == "y" || ans == "Y" {
+			emptyContentsForFile(RESOURCEPATH)
+		} else {
+			fmt.Println("Cancelled delete command. Resource intact.")
+		}
+	} else {
+		fmt.Println("Sorry you dont have correct access. Register your request for `DELETE` access to admin.")
+	}
+
+}

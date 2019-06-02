@@ -53,8 +53,14 @@ func SetCommands() {
 	command = getGrantSuperUserRoleCommand()
 	command.AddCommandWithArgs(grantSuperuserRoleToUser)
 
+	command = getUpdateResourceCommand()
+	command.AddCommandWithArgs(updateResourceFile)
+
 	command = getListUsersCommand()
 	command.AddCommand(listUsersInfo)
+
+	command = getDeleteResourceCommand()
+	command.AddCommand(deleteResourceFile)
 
 	command = getAccessToUsersCommand()
 	command.AddCommand(grantAccessToPendingUserRequests)
@@ -116,6 +122,26 @@ func getAccessToUsersCommand() command.Command {
 		Description: "Grant access to pending access-requests for users.",
 		Category: "Resource",
 		UsageText: "grantAccess: Grant access to users for pending access requests.",
+	}
+	return command
+}
+
+func getUpdateResourceCommand() command.Command {
+	command := command.Command {
+		Name: "updateResource",
+		Description: "Update resource file by appending text to it.",
+		Category: "Resource",
+		UsageText: "updateResource :  Ex- updateResource written by Gandalf! ",
+	}
+	return command
+}
+
+func getDeleteResourceCommand() command.Command {
+	command := command.Command {
+		Name: "deleteResource",
+		Description: "Delete resource file contents.",
+		Category: "Resource",
+		UsageText: "deleteResource :  Ex- deleteResource",
 	}
 	return command
 }

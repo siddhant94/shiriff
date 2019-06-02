@@ -61,10 +61,8 @@ func writeToLoggedInFileStore(email string) {
 	filename := DBPATH + LoggedInUsersFile
 	f, err := os.OpenFile(filename, os.O_WRONLY, 0600)
 	// Empty contents
-	err = os.Truncate(filename, 0)
-	if err != nil {
-		fmt.Println("Error truncating file, ",err)
-	}
+	emptyContentsForFile(filename)
+	
 	if err != nil {
 		// panic(err)
 		fmt.Println("Cannot open file, ", err)
@@ -75,6 +73,13 @@ func writeToLoggedInFileStore(email string) {
 	if _, err = f.WriteString(email); err != nil {
 		// panic(err)
 		fmt.Println("Cannot write to  file, ", err)
+	}
+}
+
+func emptyContentsForFile(filename string) {
+	err := os.Truncate(filename, 0)
+	if err != nil {
+		fmt.Println("Error truncating file, ",err)
 	}
 }
 
@@ -189,4 +194,27 @@ func getAccessLevelFromAbbreviation(str string) []string {
 		}
 	}
 	return accessString
+}
+
+func appendToFile(filename string, textToWrite string) {
+	f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		fmt.Println("Unable to open file, ",err)
+		return
+	}
+	fmt.Println("Coming here")
+
+	defer f.Close()
+
+	if _, err = f.WriteString(textToWrite); err != nil {
+	    fmt.Println("Unable to write to resource file, ",err)
+		return
+	}
+}
+
+func checkIfAccessPresent(str string, accessLevelToCheckFor string) bool {
+	if strings.Contains(str, accessLevelToCheckFor) == true {
+		return true
+	}
+	return false
 }
