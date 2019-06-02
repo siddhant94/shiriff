@@ -9,6 +9,14 @@ import (
 	"shiriff/cmd/internal/command"
 )
 
+func validateArgumentsLength(args []string, expLength int, errMsg string) bool {
+	if len(args) != expLength {
+		fmt.Println(errMsg)
+		return false
+	}
+	return true
+}
+
 func getCheckAccessLevelsCommand() command.Command {
 	command := command.Command {
 		Name: "checkAccessLevel",

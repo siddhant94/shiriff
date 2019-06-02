@@ -5,8 +5,8 @@ import (
 )
 
 func registerUser(args ...string) {
-	if len(args) != 3 {
-		fmt.Println("Please provide all the details - username, email and password")
+	msg := "Please provide all the details - username, email and password"
+	if !validateArgumentsLength(args, 3, msg) {
 		return
 	}
 
@@ -32,8 +32,8 @@ func registerUser(args ...string) {
 }
 
 func loginUser(args ...string) {
-	if len(args) != 2 {
-		fmt.Println("Please provide all the details - email and password")
+	msg := "Please provide all the details - email and password"
+	if !validateArgumentsLength(args, 2, msg) {
 		return
 	}
 	email := args[0]
@@ -68,8 +68,8 @@ func loginUser(args ...string) {
 }
 
 func requestAccess(args ...string) {
-	if len(args)!= 2 {
-		fmt.Println("Provide email as well as non-space separated Access Level abbreciations")
+	msg := "Provide email as well as non-space separated Access Level abbreciations"
+	if !validateArgumentsLength(args, 2, msg) {
 		return
 	}
 	email := args[0]
@@ -101,8 +101,8 @@ func requestAccess(args ...string) {
 }
 
 func checkUserAccessLevels(args ...string) {
-	if len(args) != 1 {
-		fmt.Println("Email required for checking access levels")
+	msg := "Email required for checking access levels"
+	if !validateArgumentsLength(args, 1, msg) {
 		return
 	}
 	email := args[0]
