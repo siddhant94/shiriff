@@ -13,12 +13,14 @@ import (
 const DBPATH = "/home/sid/Desktop/Workspace/go/src/shiriff"
 const USERSLISTFILE = "/shiriffDB/users.json"
 const LoggedInUsersFile = "/shiriffDB/logged-in-users.txt"
+const RESOURCEPATH = DBPATH + "/shiriffDB/resource.txt"
 
 type UserDetails struct {
 	UserName string `json:"username"`
 	Email	 string `json:"email"`
 	Password string `json:"password"`
 	Access   string
+	RequestPending string `json:"accessRequestsPending, omitempty"`
 }
 
 type UserList struct {
@@ -37,6 +39,9 @@ func SetCommands() {
 
 	command = getLoginUserCommand()
 	command.AddCommandWithArgs(loginUser)
+
+	command = getRequestAccessCommand()
+	command.AddCommandWithArgs(requestAccess)
 }
 
 func getRegisterUserCommand() command.Command {
@@ -52,9 +57,19 @@ func getRegisterUserCommand() command.Command {
 func getLoginUserCommand() command.Command {
 	command := command.Command {
 		Name: "login",
-		Description: "Log in existing user",
+		Description: "Log in as an existing user",
 		Category: "Auth",
 		UsageText: "login {Email} {Password}",
+	}
+	return command
+}
+
+func getRequestAccessCommand() command.Command {
+	command := command.Command {
+		Name: "requestAccess",
+		Description: "Request for Access for a user",
+		Category: "Access Control",
+		UsageText: "requestAccess {Email} {AccessAbbreviations} : Abbreviations are `R`- READ,`W`- WRITE ,`D`-DELETE. Ex - requestAccess abc@gmail.com WD when requesting for Write and Delete",
 	}
 	return command
 }
@@ -76,22 +91,12 @@ func registerUser(args ...string) {
 		Access: "READ", // By default READ Access given
 	}
 
-	filepath := DBPATH + USERSLISTFILE
 	// Get existing users and append new user to the list.
 	usersList := getUnmarshalledUsersList()
 	// Add new user to existing list.
 	usersList = append(usersList, oneUser)
 
-	res, err := json.MarshalIndent(usersList, "", " ")
-	if err != nil {
-		fmt.Println("Error marshalling user data in register, ", err)
-		return
-	}
-	err = ioutil.WriteFile(filepath, res, 0644)
-	if err != nil {
-		fmt.Println("Error writing user data in register, ", err)
-		return
-	}
+	updateUsersList(usersList)
 	fmt.Println("Write Successful. Successfully registered "+ userName)
 	return
 }
@@ -108,6 +113,7 @@ func loginUser(args ...string) {
 	res := checkIfFileContains(loggedInUsersFilePath, email)
 	if res == true {
 		fmt.Println("You are already logged in with "+email)
+		viewResource(RESOURCEPATH)
 		return
 	}
 	// Check users list for credentials
@@ -115,18 +121,54 @@ func loginUser(args ...string) {
 	for i := 0; i < len(usersList); i++ {
 		if usersList[i].Email == email {
 			if usersList[i].Password == password {
-				//Write to logged in users store.
+				//Write to logged in users store. TODO - Add check if write was successful
 				writeToLoggedInFileStore(usersList[i].Email)
 				fmt.Println("Yay! you are now logged in!")
+				fmt.Println("Your Access Levels - ",usersList[i].Access)
+				viewResource(RESOURCEPATH)
 				return
 			} else {
 				fmt.Println("You shall not pass (INCORRECT PASSWORD)")
 			}
 		} else {
 			fmt.Println("Oops, you need to register first")
+			return
 		}
 	}
 
+}
+
+func requestAccess(args ...string) {
+	if len(args)!= 2 {
+		fmt.Println("Provide email as well as non-space separated Access Level abbreciations")
+		return
+	}
+	email := args[0]
+	accessAbbr := args[1]
+	// Check if access abbreviations are correct. TODO - shopuld come from config
+	for _, val := range accessAbbr {
+		oneAbbr := string(val)
+		if oneAbbr != "R" && oneAbbr != "W" && oneAbbr != "D" {
+			fmt.Println("Unknown access abbreviation (Possible values: R- READ, W-WRITE, D-DELETE). Got "+oneAbbr)
+			return
+		}
+	}
+	// Check if user is logged in
+	loggedInUsersFilePath := DBPATH + LoggedInUsersFile
+	res := checkIfFileContains(loggedInUsersFilePath, email)
+	if res == false {
+		fmt.Println("You need to login to request access for "+email)
+		return
+	}
+	// Add it to request pending in user state.
+	usersList := getUnmarshalledUsersList()
+	for i := 0; i < len(usersList); i++ {
+		if usersList[i].Email == email {
+			usersList[i].RequestPending = accessAbbr
+		}
+	}
+	updateUsersList(usersList)
+	fmt.Println("Request registered successfully for - ", accessAbbr)
 }
 
 func getUnmarshalledUsersList() (usersList []UserDetails) {
@@ -143,6 +185,20 @@ func getUnmarshalledUsersList() (usersList []UserDetails) {
 		return
 	}
 	return
+}
+
+func updateUsersList(usersList []UserDetails) {
+	filepath := DBPATH + USERSLISTFILE
+	res, err := json.MarshalIndent(usersList, "", " ")
+	if err != nil {
+		fmt.Println("Error marshalling user data in register, ", err)
+		return
+	}
+	err = ioutil.WriteFile(filepath, res, 0644)
+	if err != nil {
+		fmt.Println("Error writing user data in register, ", err)
+		return
+	}
 }
 
 func writeToLoggedInFileStore(email string) {
@@ -173,4 +229,15 @@ func checkIfFileContains(filepath string, str string) bool {
 		return false
 	}
 	return true
+}
+
+func viewResource(filepath string) {
+	b, err := ioutil.ReadFile(filepath)
+    if err != nil {
+        fmt.Println(err)
+    }
+
+    str := string(b)
+
+    fmt.Println(str)
 }
