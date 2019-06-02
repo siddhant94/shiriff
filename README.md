@@ -66,6 +66,8 @@ There is a file called `shiriff.logs` which will have persistent logs.
 `shiriff/config/config.go` project path has config file. It has the `APPSECRET` which is used for making a user 'superuser' i.e. admin. According to shiriff, there are 2 roles a user has 'normal' and 'superuser'. superuser would have access to all action_types i.e. READ, WRITE, DELETE. By default, normal user would have 'READ' access.
 Also in this config file you can set other constants such as `ENVIRONMENT` to DEBUG for dev env or PRODUCTION for production env and also `LOGPATH` if you wish to have some other file than shiriff.logs.
 
+A constant `DBPATH` needs to be set with absolute path for the project root directory.
+
 Resource Commands listUsers, grantAccess are only accessible by superuser. Others such as updateResource and deleteResource are accessible by any user with proper access rights i.e. with WRITE and DELETE access respectively.
 
 AuthenticationCommands - register takes in username, email and password to register a user.
